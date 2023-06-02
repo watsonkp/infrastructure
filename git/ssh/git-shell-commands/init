@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+if ! test $# = 1
+then
+	echo >&2 "init requires a repository name"
+	exit 1
+fi
+
+repo=/srv/git/$(basename $1)
+mkdir $repo
+git init --bare $repo
