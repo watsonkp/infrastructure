@@ -36,6 +36,16 @@ spec:
           - name: repositories
             mountPath: "/srv/git"
             readOnly: false
+        - name: git-git
+          image: registry.convex.watsonkp.com/sulliedeclat/git-git:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 9418
+            name: git
+          volumeMounts:
+          - name: repositories
+            mountPath: "/srv/git"
+            readOnly: true
       volumes:
       - name: ssh
         projected:
