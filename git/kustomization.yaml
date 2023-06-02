@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: infrastructure
+resources:
+- git.yaml
+configMapGenerator:
+- name: sshd-config
+  files:
+    - sshd_config
+- name: gitconfig
+  files:
+    - gitconfig
+- name: ca-user-public-key
+  files:
+    - ca_user_key.pub
+secretGenerator:
+- name: ssh-host-ed25519-key
+  files:
+  - ssh_host_ed25519_key

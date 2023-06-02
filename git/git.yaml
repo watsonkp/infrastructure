@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git-ephemeral
+  namespace: infrastructure
+  labels:
+    app: git-ephemeral
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git-ephemeral
+  template:
+    metadata:
+      labels:
+        app: git-ephemeral
+    spec:
+      containers:
+        - name: git-ssh
+          image: registry.convex.watsonkp.com/sulliedeclat/git-ssh:0.3
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: ["SYS_CHROOT"]
+          ports:
+          - containerPort: 22
+            name: ssh
+          volumeMounts:
+          - name: ssh
+            mountPath: "/etc/ssh"
+            readOnly: true
+          - name: gitconfig
+            mountPath: "/etc/gitconfig"
+            subPath: gitconfig
+            readOnly: true
+          - name: repositories
+            mountPath: "/srv/git"
+            readOnly: false
+      volumes:
+      - name: ssh
+        projected:
+          sources:
+          - secret:
+              name: ssh-host-ed25519-key
+              items:
+                - key: ssh_host_ed25519_key
+                  path: ssh_host_ed25519_key
+                  mode: 256
+          - configMap:
+              name: sshd-config
+          - configMap:
+              name: ca-user-public-key
+      - name: gitconfig
+        configMap:
+          name: gitconfig
+      - name: repositories
+        emptyDir:
+          sizeLimit: 500Mi
