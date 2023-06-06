@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: git-ssh-config
+  namespace: infrastructure
+data:
+  git-ssh.identity: "git-ssh.infrastructure.svc.cluster.local"
+  backup.user: "convex\\backupbot"
+  backup.host: "hydrogen.convex.watsonkp.com"
+  backup.output: "D:\\backup\\git\\"
+  backup.identity: "root@backup.infrastructure.svc.cluster.local"
+  backup.principals: "convex\\backupbot,git"
