@@ -45,6 +45,7 @@ spec:
                 add:
                   # Required to run default ping implementation in Alpine (busybox)
                   [ "NET_RAW" ]
+            command: ['/bin/sh', '/container/backup-git.sh']
             env:
               - name: BACKUP_USER
                 valueFrom:
