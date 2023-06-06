@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: infrastructure
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+- name: ca-user-key-public
+  files:
+  - ca_user_key.pub
+- name: ca-host-key-public
+  files:
+  - ca_host_key.pub
+- name: known-hosts
+  files:
+  - known_hosts
+secretGenerator:
+- name: ca-user-key
+  files:
+  - ca_user_key
+- name: ca-host-key
+  files:
+  - ca_host_key
