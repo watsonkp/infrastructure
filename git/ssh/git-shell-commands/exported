@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+find /srv/git/ -type f -name git-daemon-export-ok
