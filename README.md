@@ -24,15 +24,15 @@ The `.gitignore` file also serves as a list of files the deployment expects, but
 are not included in the repository.
 
 ### Files required for SSH certificate authority setup
-* ca/ca_user_key
-* ca/ca_user_key.pub
-* ca/ca_host_key
-* ca/ca_host_key.pub
-* ca/known_hosts
+* `ca/ca_user_key`
+* `ca/ca_user_key.pub`
+* `ca/ca_host_key`
+* `ca/ca_host_key.pub`
+* `ca/known_hosts`
 
 ### git server configuration
-* git/config/git/gitconfig
-* git/config/git/sshd_config
+* `git/config/git/gitconfig`
+* `git/config/git/sshd_config`
 
 ### git backup CronJob configuration
-* git/config.yaml
+* `git/config.yaml`
