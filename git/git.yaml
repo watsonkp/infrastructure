@@ -1,20 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: git-ephemeral
+  name: git
   namespace: infrastructure
   labels:
-    app: git-ephemeral
+    app: git
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: git-ephemeral
+      app: git
   template:
     metadata:
       labels:
-        app: git-ephemeral
+        app: git
     spec:
+      initContainers:
+      - name: ssh-init
+        image: registry.convex.watsonkp.com/sulliedeclat/ssh-init:latest
+        imagePullPolicy: Always
+        env:
+        - name: IDENTITY
+          valueFrom:
+            configMapKeyRef:
+              name: git-ssh-config
+              key: git-ssh.identity
+        command: ['/bin/sh', '/container/server-init.sh']
+        volumeMounts:
+        - name: key
+          mountPath: "/key"
+          readOnly: false
+        - name: ca
+          mountPath: "/secret"
+          readOnly: true
       containers:
         - name: git-ssh
           image: registry.convex.watsonkp.com/sulliedeclat/git-ssh:0.3
@@ -33,6 +51,9 @@ spec:
             mountPath: "/etc/gitconfig"
             subPath: gitconfig
             readOnly: true
+          - name: key
+            mountPath: "/key"
+            readOnly: true
           - name: repositories
             mountPath: "/srv/git"
             readOnly: false
@@ -50,19 +71,20 @@ spec:
       - name: ssh
         projected:
           sources:
-          - secret:
-              name: ssh-host-ed25519-key
-              items:
-                - key: ssh_host_ed25519_key
-                  path: ssh_host_ed25519_key
-                  mode: 256
           - configMap:
               name: sshd-config
           - configMap:
-              name: ca-user-public-key
+              name: ca-user-key-public
       - name: gitconfig
         configMap:
           name: gitconfig
+      - name: ca
+        secret:
+          secretName: ca-host-key
+          defaultMode: 256
+      - name: key
+        emptyDir:
+          sizeLimit: 10Mi
       - name: repositories
         emptyDir:
           sizeLimit: 500Mi

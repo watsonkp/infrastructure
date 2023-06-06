@@ -3,17 +3,12 @@ kind: Kustomization
 namespace: infrastructure
 resources:
 - git.yaml
+- backup.yaml
+- config.yaml
 configMapGenerator:
-- name: sshd-config
-  files:
-    - sshd_config
 - name: gitconfig
   files:
-    - gitconfig
-- name: ca-user-public-key
+    - config/git/gitconfig
+- name: sshd-config
   files:
-    - ca_user_key.pub
-secretGenerator:
-- name: ssh-host-ed25519-key
-  files:
-  - ssh_host_ed25519_key
+    - config/git/sshd_config
