@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/rules/0/host
+  value: prometheus.convex.watsonkp.com
+- op: replace
+  path: /spec/rules/1/host
+  value: grafana.convex.watsonkp.com
