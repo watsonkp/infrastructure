@@ -1,3 +1,3 @@
 - op: replace
   path: /spec/rules/0/host
-  value: kibana.convex.watsonkp.com
+  value: elasticsearch.convex.watsonkp.com
