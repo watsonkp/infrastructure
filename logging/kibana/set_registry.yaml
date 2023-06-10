@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/template/spec/initContainers/0/image
+  value: registry.convex.watsonkp.com/sulliedeclat/util-api:latest
