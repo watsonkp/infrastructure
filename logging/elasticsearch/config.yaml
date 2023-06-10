@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch
+  namespace: logging
+data:
+  elasticsearch.http.dns: "elasticsearch,elasticsearch.logging,elasticsearch.logging.svc.cluster.local"

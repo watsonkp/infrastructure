@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: elasticsearch
+  name: elasticsearch
+  namespace: logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+        - name: tls-init
+          image: registry.infrastructure.svc.cluster.local/example/elastic-tls-init:latest
+          imagePullPolicy: Always
+          env:
+            - name: 'CA_KEYSTORE_PASSWORD'
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-keystore
+                  key: ca-password
+            - name: 'TRANSPORT_KEYSTORE_PASSWORD'
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-keystore
+                  key: transport-password
+            - name: 'HTTP_KEYSTORE_PASSWORD'
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-keystore
+                  key: http-password
+            - name: 'HTTP_DNS'
+              valueFrom:
+                configMapKeyRef:
+                  name: elasticsearch
+                  key: elasticsearch.http.dns
+          volumeMounts:
+          - name: ca
+            mountPath: "/secret"
+            readOnly: true
+          - name: key
+            mountPath: "/key"
+            readOnly: false
+        - name: init
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: ['sysctl', '-w', 'vm.max_map_count=262144']
+          securityContext:
+            privileged: true
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9200
+              name: elastic-https
+              protocol: TCP
+            - containerPort: 9300
+              name: elastic-trans
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              # Setting 512Mi or less results in "unexpected error" as the only log message.
+              memory: 1024Mi
+            limits:
+              memory: 4096Mi
+          env:
+            - name: 'ELASTIC_PASSWORD'
+              valueFrom: 
+                secretKeyRef:
+                  name: elastic
+                  key: password
+            - name: 'LICENSE'
+              value: 'basic'
+            - name: 'node.name'
+              value: 'es0'
+            - name: 'cluster.name'
+              value: 'logging'
+            - name: 'cluster.initial_master_nodes'
+              value: 'es0'
+            - name: 'network.host'
+              value: '0.0.0.0'
+            - name: 'xpack.security.enabled'
+              value: 'true'
+            # Use TLS for transport communication between nodes.
+            - name: 'xpack.security.transport.ssl.enabled'
+              value: 'true'
+            - name: 'xpack.security.transport.ssl.verification_mode'
+              value: 'certificate'
+            - name: 'xpack.security.transport.ssl.keystore.type'
+              value: 'PKCS12'
+            - name: 'xpack.security.transport.ssl.keystore.path'
+              value: 'key/elastic-certificates.p12'
+            - name: 'xpack.security.transport.ssl.keystore.password'
+              valueFrom: 
+                secretKeyRef:
+                  name: elasticsearch-keystore
+                  key: transport-password
+            # Use TLS for HTTP communication with clients.
+            - name: 'xpack.security.http.ssl.enabled'
+              value: 'true'
+            - name: 'xpack.security.http.ssl.verification_mode'
+              value: 'certificate'
+            - name: 'xpack.security.http.ssl.keystore.type'
+              value: 'PKCS12'
+            - name: 'xpack.security.http.ssl.keystore.path'
+              value: 'key/http.p12'
+            - name: 'xpack.security.http.ssl.keystore.password'
+              valueFrom: 
+                secretKeyRef:
+                  name: elasticsearch-keystore
+                  key: http-password
+          volumeMounts:
+          - name: key
+            mountPath: "/usr/share/elasticsearch/config/key"
+            readOnly: true
+          - name: data
+            mountPath: "/usr/share/elasticsearch/data"
+            readOnly: false
+      volumes:
+      - name: ca
+        secret:
+          secretName: elastic-stack-ca
+          defaultMode: 256
+      - name: key
+        emptyDir:
+          sizeLimit: 10Mi
+      - name: data
+        emptyDir:
+          sizeLimit: 10Gi

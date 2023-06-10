@@ -1,0 +1,3 @@
+- op: replace
+  path: /data/elasticsearch.http.dns
+  value: "elasticsearch,elasticsearch.logging,elasticsearch.logging.svc.cluster.local,elasticsearch.convex.watsonkp.com"
