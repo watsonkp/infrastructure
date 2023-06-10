@@ -1,0 +1,4 @@
+node:
+  name: "logstash0"
+http:
+  host: "0.0.0.0"

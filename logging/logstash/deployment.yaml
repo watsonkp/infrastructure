@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: logging
+  labels:
+    app: logstash
+spec:
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      initContainers:
+      - name: users-init
+        image: registry.infrastructure.svc.cluster.local/example/util-api:latest
+        imagePullPolicy: Always
+        command: ['/bin/sh', '/container/users.sh']
+        env:
+          - name: 'ELASTIC_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                name: elastic
+                key: password
+          - name: 'LOGSTASH_PUBLISHER_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                name: logstash-publisher
+                key: password
+        volumeMounts:
+        - name: certs
+          mountPath: "/container/certs"
+          readOnly: true
+        - name: script
+          mountPath: "/container"
+          readOnly: true
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash-oss:8.8.1
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5044
+            name: beats
+            protocol: TCP
+        # WARNING: Setting logstash settings with environment variables modifies
+        # the default config file in place, so don't set them.
+        env:
+        - name: ELASTICSEARCH_USERNAME
+          valueFrom: 
+            secretKeyRef:
+              name: logstash-publisher
+              key: username
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: logstash-publisher
+              key: password
+        resources:
+          limits:
+            memory: 2048Mi
+        # WARNING There is a default logstash.conf, so overwriting the entire
+        # directory is recommended.
+        volumeMounts:
+        - name: config
+          mountPath: /usr/share/logstash/config
+          readOnly: true
+      volumes:
+      - name: certs
+        projected:
+          sources:
+          - configMap:
+              name: elasticsearch-ca
+              items:
+              - key: elasticsearch-ca.pem
+                path: elasticsearch-ca.pem
+      - name: script
+        configMap:
+          name: init-logstash-users
+          items:
+          - key: "users.sh"
+            path: "users.sh"
+      - name: config
+        projected:
+          sources:
+          - configMap:
+              name: elasticsearch-ca
+              items:
+              - key: elasticsearch-ca.pem
+                path: certs/elasticsearch-ca.pem
+          - configMap:
+              name: logstash-config
+              items:
+              - key: logstash.yml
+                path: logstash.yml
+          - configMap:
+              name: logstash-log4j2
+              items:
+              - key: log4j2.properties
+                path: log4j2.properties
+          - configMap:
+              name: logstash-pipelines
+              items:
+              - key: pipelines.yml
+                path: pipelines.yml
+          - configMap:
+              name: logstash-beats-pipeline
+              items:
+              - key: beats-pipeline.conf
+                path: beats-pipeline.conf

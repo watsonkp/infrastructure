@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: logging
+  labels:
+    app: logstash
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: logstash
+  ports:
+  - name: beats-input
+    port: 5044
+    protocol: TCP
+    targetPort: beats
