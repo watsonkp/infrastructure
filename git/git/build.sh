@@ -2,6 +2,6 @@
 
 set -e
 
-docker build -t sulliedeclat/git-git:0.1 .
-docker tag sulliedeclat/git-git:0.1 registry.convex.watsonkp.com/sulliedeclat/git-git:latest
-docker push registry.convex.watsonkp.com/sulliedeclat/git-git:latest
+docker build -t example/git-git:0.1 .
+docker tag example/git-git:0.1 registry.infrastructure.svc.cluster.local/example/git-git:latest
+docker push registry.infrastructure.svc.cluster.local/example/git-git:latest
