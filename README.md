@@ -14,8 +14,8 @@ environment.
 - [x] YouTrack server backup
 - [ ] Jenkins continuous delivery automation
 - [ ] Jenkins server backup
-- [ ] Grafana and Prometheus (cAdvisor, Node Exporter, kube-state-metrics) monitoring host and container metrics
-- [ ] ElasticSearch, Logstash (FileBeat), Kibana
+- [x] Grafana and Prometheus (cAdvisor, Node Exporter, kube-state-metrics) monitoring host and container metrics
+- [x] ElasticSearch, Logstash (FileBeat), Kibana
 - [ ] Nmap host and service inventory
 - [ ] Windows domain
 
