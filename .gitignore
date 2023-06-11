@@ -1,8 +1,0 @@
-ca/ca_user_key
-ca/ca_user_key.pub
-ca/ca_host_key
-ca/ca_host_key.pub
-ca/known_hosts
-git/config.yaml
-git/config/git/sshd_config
-git/config/git/gitconfig
