@@ -10,11 +10,11 @@ environment.
 - [x] SSH certificate authority
 - [x] git server version management (SSH, git)
 - [x] git server backup
-- [ ] YouTrack Agile project management tools
-- [ ] YouTrack server backup
+- [x] YouTrack Agile project management tools
+- [x] YouTrack server backup
 - [ ] Jenkins continuous delivery automation
 - [ ] Jenkins server backup
-- [ ] Grafana and Prometheus (cAdvisor, Node Exporter) monitoring host and container metrics
+- [ ] Grafana and Prometheus (cAdvisor, Node Exporter, kube-state-metrics) monitoring host and container metrics
 - [ ] ElasticSearch, Logstash (FileBeat), Kibana
 - [ ] Nmap host and service inventory
 - [ ] Windows domain

@@ -1,10 +1,16 @@
-FROM alpine
+FROM postgres:15-alpine
 
 RUN apk add --no-cache openssh git
 RUN mkdir /container
 RUN mkdir /data
-COPY ./git.sh /container/git.sh
 
-RUN chmod +x /container/git.sh
+# Add backup scripts
+COPY ./backup-git.sh /container/backup-git.sh
+COPY ./backup-postgresql.sh /container/backup-postgresql.sh
+COPY ./backup-youtrack.sh /container/backup-youtrack.sh
+COPY ./restore-youtrack.sh /container/restore-youtrack.sh
 
-ENTRYPOINT ["/container/git.sh"]
+RUN chmod +x /container/backup-git.sh
+RUN chmod +x /container/backup-postgresql.sh
+RUN chmod +x /container/backup-youtrack.sh
+RUN chmod +x /container/restore-youtrack.sh

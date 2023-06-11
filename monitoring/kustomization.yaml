@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources:
+- ingress.yaml
+patches:
+- target:
+    kind: Ingress
+    name: monitoring-ingress
+    namespace: monitoring
+  path: set_host.yaml

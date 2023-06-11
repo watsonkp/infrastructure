@@ -1,0 +1,89 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: filebeat-setup
+  namespace: logging
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: users-init
+        image: registry.infrastructure.svc.cluster.local/example/util-api:latest
+        imagePullPolicy: Always
+        command: ['/bin/sh', '/container/users.sh']
+        env:
+          - name: 'ELASTIC_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                name: elastic
+                key: password
+          - name: 'FILEBEAT_INSTALLER_PASSWORD'
+            valueFrom:
+              secretKeyRef:
+                name: filebeat-installer
+                key: password
+        volumeMounts:
+        - name: certs
+          mountPath: "/container/certs"
+          readOnly: true
+        - name: script
+          mountPath: "/container"
+          readOnly: true
+      containers:
+      - name: setup
+        image: docker.elastic.co/beats/filebeat-oss:8.8.1
+        imagePullPolicy: IfNotPresent
+        args: [
+          "setup",
+          "--dashboards",
+          "-E", "output.logstash.enabled=false",
+          "-E", "output.elasticsearch.hosts=['elasticsearch.logging:9200']",
+          "-E", "output.elasticsearch.username=$(ELASTICSEARCH_USERNAME)",
+          "-E", "output.elasticsearch.password=$(ELASTICSEARCH_PASSWORD)",
+          "-E", "setup.kibana.host=kibana.logging:5601",
+          "-E", "setup.kibana.username=$(KIBANA_USERNAME)",
+          "-E", "setup.kibana.password=$(KIBANA_PASSWORD)",
+          "-e",
+        ]
+        env:
+        - name: ELASTICSEARCH_USERNAME
+          valueFrom: 
+            secretKeyRef:
+              name: filebeat-installer
+              key: username
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: filebeat-installer
+              key: password
+        - name: KIBANA_USERNAME
+          valueFrom: 
+            secretKeyRef:
+              name: kibana-administrator
+              key: username
+        - name: KIBANA_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: kibana-administrator
+              key: password
+        volumeMounts:
+        - name: certs
+          mountPath: "/usr/share/filebeat/certs"
+          readOnly: true
+      volumes:
+      - name: script
+        configMap:
+          name: init-filebeat-setup-users
+          items:
+          - key: "users.sh"
+            path: "users.sh"
+      - name: certs
+        projected:
+          sources:
+          - configMap:
+              name: elasticsearch-ca
+              items:
+              - key: elasticsearch-ca.pem
+                path: elasticsearch-ca.pem

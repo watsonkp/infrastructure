@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: youtrack-config
+  namespace: infrastructure
+data:
+  backup.user:
+  backup.host:
+  backup.output:
+  backup.identity:
+  backup.principals:

@@ -1,0 +1,2 @@
+@cert-authority *.svc.cluster.local ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHggtPJTkifj9LxbGZz0Xl3G6Re/TwSFErM1IG93nCGC sulliedeclat@docker.lab.watsonkp.com
+@cert-authority *.convex.watsonkp.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHggtPJTkifj9LxbGZz0Xl3G6Re/TwSFErM1IG93nCGC sulliedeclat@docker.lab.watsonkp.com

@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: logging
+resources:
+- service.yaml
+- elasticsearch.yaml
+- credentials.yaml
+- config.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+# Certificate authority password protected private key
+# Output of:
+# elasticsearch-certutil ca
+secretGenerator:
+- name: elastic-stack-ca
+  files:
+  - elastic-stack-ca.p12
+# Certificate authority public key
+# Output of:
+# elasticsearch-certutil http
+configMapGenerator:
+- name: elasticsearch-ca
+  files:
+  - elasticsearch-ca.pem
+patches:
+- target:
+    kind: Deployment
+    name: elasticsearch
+    namespace: logging
+  path: set_registry.yaml
+- target:
+    kind: ConfigMap
+    name: elasticsearch
+    namespace: logging
+  path: set_dns.yaml

@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: youtrack
+  name: youtrack
+  namespace: infrastructure
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: youtrack
+  template:
+    metadata:
+      labels:
+        app: youtrack
+    spec:
+      initContainers:
+        - name: ssh-init
+          image: registry.convex.watsonkp.com/sulliedeclat/ssh-init:latest
+          imagePullPolicy: Always
+          command: ['/bin/sh', '/container/client-init.sh']
+          env:
+          - name: IDENTITY
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.identity
+          - name: PRINCIPALS
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.principals
+          volumeMounts:
+          - name: key
+            mountPath: "/key"
+            readOnly: false
+          - name: ca
+            mountPath: "/secret"
+            readOnly: true
+        - name: restore
+          image: registry.convex.watsonkp.com/sulliedeclat/backup:latest
+          imagePullPolicy: Always
+          command: ['/bin/sh', '/container/restore-youtrack.sh']
+          securityContext:
+            capabilities:
+              add:
+                # Required to run default ping implementation in Alpine (busybox)
+                [ "NET_RAW" ]
+          env:
+          - name: BACKUP_USER
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.user
+          - name: BACKUP_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.host
+          - name: BACKUP_OUTPUT
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.output
+          volumeMounts:
+          - name: key
+            mountPath: "/key"
+            readOnly: true
+          - name: config
+            mountPath: "/config"
+            readOnly: true
+          - name: backup
+            mountPath: "/opt/youtrack/backups"
+            readOnly: false
+      containers:
+        - name: youtrack
+          image: docker.io/jetbrains/youtrack:2023.1.10106
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: youtrack-http
+              protocol: TCP
+          resources:
+            requests:
+              memory: 2048Mi
+            limits:
+              memory: 3072Mi
+          volumeMounts:
+          - name: backup
+            mountPath: "/opt/youtrack/backups"
+            readOnly: false
+        - name: youtrack-backup
+          image: registry.convex.watsonkp.com/sulliedeclat/backup:latest
+          imagePullPolicy: Always
+          command: ['/bin/sh', '/container/backup-youtrack.sh']
+          securityContext:
+            capabilities:
+              add:
+                # Required to run default ping implementation in Alpine (busybox)
+                [ "NET_RAW" ]
+          env:
+          - name: BACKUP_USER
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.user
+          - name: BACKUP_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.host
+          - name: BACKUP_OUTPUT
+            valueFrom:
+              configMapKeyRef:
+                name: youtrack-config
+                key: backup.output
+          volumeMounts:
+          - name: key
+            mountPath: "/key"
+            readOnly: true
+          - name: config
+            mountPath: "/config"
+            readOnly: true
+          - name: backup
+            mountPath: "/opt/youtrack/backups"
+            readOnly: true
+      volumes:
+      - name: ca
+        secret:
+          secretName: ca-user-key
+          defaultMode: 256
+      - name: key
+        emptyDir:
+          sizeLimit: 10Mi
+      - name: config
+        configMap:
+          name: known-hosts
+      - name: backup
+        emptyDir:
+          sizeLimit: 512Mi

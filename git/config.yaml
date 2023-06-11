@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: git-ssh-config
+  namespace: infrastructure
+data:
+  git-ssh.identity: "git-ssh.infrastructure.svc.cluster.local"
+  backup.user:
+  backup.host:
+  backup.output:
+  backup.identity:
+  backup.principals:

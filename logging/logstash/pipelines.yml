@@ -1,0 +1,2 @@
+- pipeline.id: beats-pipeline
+  path.config: "/usr/share/logstash/config/beats-pipeline.conf"
