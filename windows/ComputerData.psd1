@@ -1,0 +1,9 @@
+@{
+    AllNodes = @(
+        @{
+            NodeName = ''
+            InterfaceAddress = ''
+            DNSServerAddress = ''
+        }
+    )
+}
