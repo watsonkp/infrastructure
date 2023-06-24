@@ -9,15 +9,25 @@ environment.
 
 - [x] SSH certificate authority
 - [x] git server version management (SSH, git)
-- [x] git server backup
+	- [x] SSH protocol access
+	- [x] git protocol access
+	- [ ] HTTP protocol access
+	- [x] git server backup
 - [x] YouTrack Agile project management tools
-- [x] YouTrack server backup
-- [ ] Jenkins continuous delivery automation
-- [ ] Jenkins server backup
+	- [x] YouTrack server backup
+- [x] Jenkins continuous delivery automation
+	- [ ] Jenkins build nodes
+	- [ ] Jenkins server backup
 - [x] Grafana and Prometheus (cAdvisor, Node Exporter, kube-state-metrics) monitoring host and container metrics
 - [x] ElasticSearch, Logstash (FileBeat), Kibana
 - [ ] Nmap host and service inventory
 - [ ] Windows domain
+	- [ ] Windows DNS
+	- [ ] Windows DHCP
+	- [ ] Users, Groups, Computers, etc. Active Directory objects
+	- [ ] Active Directory Certificate Services
+	- [ ] Winlogbeat
+	- [ ] Sysmon logging
 
 ## Deployment specific files
 The `.gitignore` file also serves as a list of files the deployment expects, but
