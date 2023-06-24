@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jenkins
+  name: jenkins
+  namespace: infrastructure
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      initContainers:
+        - name: plugin-manager
+          image: docker.io/jenkins/jenkins:alpine
+          imagePullPolicy: IfNotPresent
+          # Refer to https://github.com/jenkinsci/plugin-installation-manager-tool
+          command: ['jenkins-plugin-cli', '-f', '/container/plugins.txt']
+          volumeMounts:
+          - name: plugins
+            mountPath: "/usr/share/jenkins/ref/plugins"
+            readOnly: false
+          - name: plugin-list
+            mountPath: "/container/"
+            readOnly: true
+      containers:
+        - name: jenkins
+          image: docker.io/jenkins/jenkins:alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: jenkins-http
+              protocol: TCP
+          resources:
+            requests:
+              memory: 256Mi
+            limits:
+              memory: 1024Mi
+          volumeMounts:
+          - name: plugins
+            mountPath: "/usr/share/jenkins/ref/plugins"
+            readOnly: false
+          - name: executors
+            mountPath: "/usr/share/jenkins/ref/init.groovy.d/"
+            readOnly: false
+      volumes:
+      - name: plugins
+        emptyDir:
+          sizeLimit: 512Mi
+      - name: plugin-list
+        configMap:
+          name: jenkins-plugins
+      - name: executors
+        configMap:
+          name: jenkins-executors
