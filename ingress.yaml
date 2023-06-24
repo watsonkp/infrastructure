@@ -16,3 +16,13 @@ spec:
               name: youtrack
               port:
                 number: 8080
+  - host: jenkins.infrastructure.svc.cluster.local
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: jenkins
+              port:
+                number: 8080
