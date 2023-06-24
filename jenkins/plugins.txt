@@ -1,0 +1,4 @@
+workflow-aggregator:latest
+ssh-slaves:latest
+git:latest
+junit:latest
