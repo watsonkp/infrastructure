@@ -26,3 +26,13 @@ spec:
               name: jenkins
               port:
                 number: 8080
+  - host: distribution.infrastructure.svc.cluster.local
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: distribution
+              port:
+                number: 80
