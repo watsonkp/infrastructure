@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/addresses/0
+  value: 10.42.0.96/27
