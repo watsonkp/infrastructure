@@ -18,6 +18,7 @@ environment.
 - [x] Jenkins continuous delivery automation
 	- [ ] Jenkins build nodes
 	- [ ] Jenkins server backup
+- [x] iOS ad hoc distribution server
 - [x] Grafana and Prometheus (cAdvisor, Node Exporter, kube-state-metrics) monitoring host and container metrics
 - [x] ElasticSearch, Logstash (FileBeat), Kibana
 - [ ] Nmap host and service inventory
