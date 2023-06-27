@@ -5,6 +5,10 @@ metadata:
   namespace: infrastructure
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+      - distribution.svc.cluster.local
+    secretName: distribution-tls
   rules:
   - host: youtrack.infrastructure.svc.cluster.local
     http:
