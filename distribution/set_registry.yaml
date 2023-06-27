@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/template/spec/initContainers/0/image
+  value: registry.example.com/example/ssh-init:latest
+- op: replace
+  path: /spec/template/spec/containers/0/image
+  value: registry.example.com/example/ssh:latest

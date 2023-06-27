@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dist-ssh-config
+  namespace: infrastructure
+data:
+  dist-ssh.identity: distribution.infrastructure.svc.cluster.local
