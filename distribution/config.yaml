@@ -4,4 +4,4 @@ metadata:
   name: dist-ssh-config
   namespace: infrastructure
 data:
-  dist-ssh.identity: kubernetes.convex.watsonkp.com
+  dist-ssh.identity: distribution.infrastructure.svc.cluster.local

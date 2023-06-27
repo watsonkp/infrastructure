@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: infrastructure
 resources:
 - distribution.yaml
+- config.yaml
 configMapGenerator:
 - name: sshd-config
   files:
@@ -12,3 +13,8 @@ configMapGenerator:
     name: distribution
     namespace: infrastructure
   path: set_registry.yaml
+- target:
+    kind: ConfigMap
+    name: dist-ssh-config
+    namespace: infrastructure
+  path: set_identity.yaml
