@@ -14,3 +14,20 @@ spec:
       port: 80
       protocol: TCP
       targetPort: dist-http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: distribution-ssh
+  namespace: infrastructure
+  labels:
+    app: distribution
+spec:
+  type: NodePort
+  selector:
+    app: distribution
+  ports:
+    - name: dist-ssh
+      port: 22
+      protocol: TCP
+      targetPort: dist-ssh
