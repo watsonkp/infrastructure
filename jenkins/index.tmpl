@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Artifacts</title>
+		<link rel="stylesheet" href="/static/main.css">
+	</head>
+	<body>
+		<ul reversed>
+			{{range .}}<li><a href="itms-services://?action=download-manifest&url=https://distribution.svc.cluster.local/{{.Project}}/builds/{{.Build}}/archive/{{.Path}}/manifest.plist">{{.Project}} build {{.Build}}</a></li>{{end}}
+		</ul>
+	</body>
+</html>

@@ -48,6 +48,26 @@ spec:
           - name: executors
             mountPath: "/usr/share/jenkins/ref/init.groovy.d/"
             readOnly: false
+          - name: artifacts
+            mountPath: "/var/jenkins_home/jobs"
+            readOnly: false
+        - name: ad-hoc-server
+          image: registry.infrastructure.svc.cluster.local/example/distribution:latest
+          imagePullPolicy: Always
+          env:
+          - name: HTTP_PORT
+            value: "8081"
+          ports:
+            - containerPort: 8081
+              name: artifact-http
+              protocol: TCP
+          volumeMounts:
+          - name: artifacts
+            mountPath: "/data"
+            readOnly: true
+          - name: static
+            mountPath: "/static"
+            readOnly: true
       volumes:
       - name: plugins
         emptyDir:
@@ -58,3 +78,17 @@ spec:
       - name: executors
         configMap:
           name: jenkins-executors
+      - name: artifacts
+        emptyDir:
+          sizeLimit: 5Gi
+      - name: static
+        projected:
+          sources:
+          - configMap:
+              name: artifacts-index
+          - configMap:
+              name: artifacts-style
+          - configMap:
+              name: measure-display-image
+          - configMap:
+              name: measure-full-size-image

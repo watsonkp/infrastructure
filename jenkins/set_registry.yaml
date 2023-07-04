@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/template/spec/containers/1/image
+  value: registry.infrastructure.svc.cluster.local/example/distribution:latest

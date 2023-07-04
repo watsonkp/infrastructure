@@ -11,6 +11,11 @@ spec:
   selector:
     app: jenkins
   ports:
-  - port: 8080
+  - name: jenkins-http
+    port: 8080
     protocol: TCP
     targetPort: jenkins-http
+  - name: artifact-http
+    port: 8081
+    protocol: TCP
+    targetPort: artifact-http
