@@ -1,3 +1,0 @@
-- op: replace
-  path: /data/dist-ssh.identity
-  value: kubernetes.convex.watsonkp.com
