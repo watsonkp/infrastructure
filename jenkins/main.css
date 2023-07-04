@@ -1,0 +1,41 @@
+body {
+    width: 75%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16.67%;
+    font-size: 1.33rem;
+    background-color: #222222;
+    color: #e0e0e0;
+}
+
+div {
+    /* 16.67% * 4/3 would match the top margin of the body */
+    margin-bottom: 16.67%;
+}
+
+h1 {
+    font-size: 2.35rem;
+}
+
+h2 {
+    font-size: 1.78rem;
+}
+
+h3 {
+    font-size: 1.33rem;
+}
+
+a {
+    color: #bbeeee;
+}
+
+li {
+    font-size: 1.78rem;
+    height: 1.78rem;
+}
+
+li img {
+    max-height: 100%;
+    vertical-align: text-bottom;
+}

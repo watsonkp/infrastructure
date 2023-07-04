@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
 - jenkins.yaml
 namespace: infrastructure
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: jenkins-plugins
   files:
@@ -10,3 +12,21 @@ configMapGenerator:
 - name: jenkins-executors
   files:
   - executors.groovy
+- name: artifacts-index
+  files:
+  - index.tmpl
+- name: artifacts-style
+  files:
+  - main.css
+- name: measure-display-image
+  files:
+  - measure.512x512.png
+- name: measure-full-size-image
+  files:
+  - measure.57x57.png
+patches:
+- target:
+    kind: Deployment
+    name: jenkins
+    namespace: infrastructure
+  path: set_registry.yaml
