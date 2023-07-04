@@ -37,6 +37,6 @@ spec:
           path: "/"
           backend:
             service:
-              name: distribution
+              name: jenkins
               port:
-                number: 80
+                number: 8081

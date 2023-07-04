@@ -8,5 +8,5 @@
   path: /spec/rules/2/host
   value: distribution.convex.watsonkp.com
 - op: replace
-  path: /spec/tls/hosts/0
+  path: /spec/tls/0/hosts/0
   value: distribution.convex.watsonkp.com
